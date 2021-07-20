@@ -31,3 +31,37 @@ void INC_B(CPU* cpu){
     }
     cpu->FLAG_REGISTER &= 0xbf; // 0xbf->0b10111111 turning bit 6 (N flag) off 
 }
+
+//0x5
+void DEC_B(CPU* cpu){
+    //Check for H first
+    if(((cpu->B & 0xf) + 1) & 0x10){ 
+        cpu->FLAG_REGISTER |= (0x1 << 5); 
+    }
+    cpu->B--;
+    if (cpu->B == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); 
+    }
+    cpu->FLAG_REGISTER |= (0x1 << 6);//Now turning on
+
+}
+
+//0x6
+void LD_B_8(CPU* cpu, d8 data){
+    cpu->B = data;
+}
+
+
+//0x7 pending...
+
+//0x8
+void LD_A16_SP(CPU* cpu, d16 address){
+    MEMORY[address] = cpu->SP & 0xff;
+    MEMORY[address + 1] = (cpu->SP >> 8);
+}
+
+//0x9
+void ADD_HL_BC(CPU* cpu){
+    cpu->HL+=cpu->BC;
+}
+

@@ -40,8 +40,9 @@ int main(int argc, char **argv){
 
     cpu->dump_registers(cpu);
 
-    LD_BC_A(cpu);
-    INC_B(cpu);
+    cpu->HL = 0x1a1b;
+    cpu->BC = 0x1010;
+    ADD_HL_BC(cpu);
 
     cpu->dump_registers(cpu);
 
