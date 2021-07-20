@@ -63,5 +63,16 @@ void LD_A16_SP(CPU* cpu, d16 address){
 //0x9
 void ADD_HL_BC(CPU* cpu){
     cpu->HL+=cpu->BC;
+
+    //Missing raising flags
 }
 
+//0xA
+void LD_A_BC(CPU* cpu){
+    cpu->A = MEMORY[cpu->BC];
+}
+
+//0xB
+void DEC_BC(CPU* cpu){
+    cpu->BC--;
+}
