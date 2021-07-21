@@ -62,9 +62,15 @@ void LD_A16_SP(CPU* cpu, d16 address){
 
 //0x9
 void ADD_HL_BC(CPU* cpu){
+    if(((cpu->L & 0xf) + 1) & 0x10){ //If the lower nibble of reg overflows
+        cpu->FLAG_REGISTER |= (0x1 << 5); //Set H flag to 1
+    }
+    if(((cpu->HL & 0xffff) + 1) & 0x10000){
+        cpu->FLAG_REGISTER |= (0x1 << 4); //Set C flag to 1
+    }
     cpu->HL+=cpu->BC;
 
-    //Missing raising flags
+    cpu->FLAG_REGISTER &= 0xbf; // 0xbf->0b10111111 turning bit 6 (N flag) off 
 }
 
 //0xA
@@ -75,4 +81,35 @@ void LD_A_BC(CPU* cpu){
 //0xB
 void DEC_BC(CPU* cpu){
     cpu->BC--;
+}
+
+//0xC
+void INC_C(CPU* cpu){
+    if(((cpu->C & 0xf) + 1) & 0x10){ //If the lower nibble of reg overflows
+        cpu->FLAG_REGISTER |= (0x1 << 5); //Set H flag to 1
+    }
+    cpu->C++;
+    if (cpu->C == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); //Set Z flag to 1
+    }
+    cpu->FLAG_REGISTER &= 0xbf; // 0xbf->0b10111111 turning bit 6 (N flag) off 
+}
+
+//0xD
+void DEC_C(CPU* cpu){
+    //Check for H first
+    if(((cpu->C & 0xf) + 1) & 0x10){ 
+        cpu->FLAG_REGISTER |= (0x1 << 5); 
+    }
+    cpu->C--;
+    if (cpu->C == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); 
+    }
+    cpu->FLAG_REGISTER |= (0x1 << 6);//Now turning on
+
+}
+
+//0xE
+void LD_C_8(CPU* cpu, d8 data){
+    cpu->C = data;
 }

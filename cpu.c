@@ -34,16 +34,8 @@ int main(int argc, char **argv){
     reset_cpu(cpu);
 
     cpu->dump_registers(cpu);
-
-    NOP(cpu);
-    LD_BC_16(cpu,0xfffe);
-
-    cpu->dump_registers(cpu);
-
-    cpu->HL = 0x1a1b;
-    cpu->BC = 0x1010;
-    ADD_HL_BC(cpu);
-
+    LD_C_8(cpu,0xff);
+    INC_C(cpu);
     cpu->dump_registers(cpu);
 
 
