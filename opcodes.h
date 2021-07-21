@@ -113,3 +113,27 @@ void DEC_C(CPU* cpu){
 void LD_C_8(CPU* cpu, d8 data){
     cpu->C = data;
 }
+
+//0xF 
+//Pending....
+
+//0x10
+void STOP(CPU* cpu){
+    //Pending... need to implement interrupts and CLK signals
+}
+
+
+//0x11
+void LD_DE_16(CPU* cpu, d16 data){
+    cpu->DE = data;
+}
+
+//0x12
+void LD_DE_A(CPU* cpu){
+    MEMORY[cpu->DE] = cpu->A;
+}
+
+//0x13
+void INC_DE(CPU* cpu){
+    cpu->DE++;
+}
