@@ -204,7 +204,7 @@ void INC_E(CPU* cpu){
     if(((cpu->E & 0xf) + 1) & 0x10){ //If the lower nibble of reg overflows
         cpu->FLAG_REGISTER |= (0x1 << 5); //Set H flag to 1
     }
-    cpu->E+;
+    cpu->E++;
     if (cpu->E == 0){
         cpu->FLAG_REGISTER |= (0x1 << 7); //Set Z flag to 1
     }
@@ -229,3 +229,91 @@ void LD_E_8(CPU* cpu, d8 data){
 }
 
 //0x1F pending....
+
+//0x20
+
+void JR_NZ_8(CPU* cpu, d8 steps){
+    if (cpu->FLAG_REGISTER >> 7){
+        cpu->PC++;
+    }
+    else{
+        cpu->PC+=steps;
+    }
+}
+
+//0x21
+void LD_HL_16(CPU* cpu, d16 data){
+    cpu->HL = data;
+}
+
+//0x22
+void LD_HLP_A(CPU* cpu){
+    MEMORY[cpu->HL++]=cpu->A;
+}
+
+//0x23
+void INC_HL(CPU* cpu){
+    cpu->HL++;
+}
+
+//0x24
+void INC_H(CPU* cpu){
+    if(((cpu->H & 0xf) + 1) & 0x10){ //If the lower nibble of reg overflows
+        cpu->FLAG_REGISTER |= (0x1 << 5); //Set H flag to 1
+    }
+    cpu->H++;
+    if (cpu->H == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); //Set Z flag to 1
+    }
+    cpu->FLAG_REGISTER &= 0xbf; // 0xbf->0b10111111 turning bit 6 (N flag) off 
+}
+
+//0x25
+void DEC_H(CPU* cpu){
+    //Check for H first
+    if(((cpu->D & 0xf) + 1) & 0x10){ 
+        cpu->FLAG_REGISTER |= (0x1 << 5); 
+    }
+    cpu->D--;
+    if (cpu->D == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); 
+    }
+    cpu->FLAG_REGISTER |= (0x1 << 6);//Now turning on
+
+}
+
+//0x26
+void LD_H_8(CPU* cpu, d8 data){
+    cpu->H = data;
+}
+
+//0x27 Pending... BCD
+
+//0x28
+
+void JR_Z_8(CPU* cpu, d8 steps){
+    if (cpu->FLAG_REGISTER >> 7){
+        cpu->PC+=steps;
+    }
+    else{
+        cpu->PC++;
+    }
+}
+
+//0x29
+void ADD_HL_HL(CPU* cpu){
+    if(((cpu->L & 0xf) + 1) & 0x10){ //If the lower nibble of reg overflows
+        cpu->FLAG_REGISTER |= (0x1 << 5); //Set H flag to 1
+    }
+    if(((cpu->HL & 0xffff) + 1) & 0x10000){
+        cpu->FLAG_REGISTER |= (0x1 << 4); //Set C flag to 1
+    }
+    cpu->HL+=cpu->HL;
+
+    cpu->FLAG_REGISTER &= 0xbf; // 0xbf->0b10111111 turning bit 6 (N flag) off 
+}
+
+//0x2A
+void LD_A_HLP(CPU* cpu){
+    cpu->A = MEMORY[cpu->HL++];
+}
