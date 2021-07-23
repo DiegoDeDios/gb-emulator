@@ -137,3 +137,34 @@ void LD_DE_A(CPU* cpu){
 void INC_DE(CPU* cpu){
     cpu->DE++;
 }
+
+//0x14
+void INC_D(CPU* cpu){
+    if(((cpu->D & 0xf) + 1) & 0x10){ //If the lower nibble of reg overflows
+        cpu->FLAG_REGISTER |= (0x1 << 5); //Set H flag to 1
+    }
+    cpu->D++;
+    if (cpu->D == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); //Set Z flag to 1
+    }
+    cpu->FLAG_REGISTER &= 0xbf; // 0xbf->0b10111111 turning bit 6 (N flag) off 
+}
+
+//0x15
+void DEC_D(CPU* cpu){
+    //Check for H first
+    if(((cpu->D & 0xf) + 1) & 0x10){ 
+        cpu->FLAG_REGISTER |= (0x1 << 5); 
+    }
+    cpu->D--;
+    if (cpu->D == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); 
+    }
+    cpu->FLAG_REGISTER |= (0x1 << 6);//Now turning on
+}
+
+//0x16
+void LD_D_8(CPU* cpu, d8 data){
+    cpu->D = data;
+}
+
