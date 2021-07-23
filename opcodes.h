@@ -168,3 +168,64 @@ void LD_D_8(CPU* cpu, d8 data){
     cpu->D = data;
 }
 
+//0x17 Pending... another rotation
+
+//0x18
+void JR(CPU* cpu, d8 steps){
+    cpu->PC+=steps;
+    //TODO:Do we have to store the previous PC into the sp?
+}
+
+//0x19
+void ADD_HL_DE(CPU* cpu){
+    if(((cpu->L & 0xf) + 1) & 0x10){ //If the lower nibble of reg overflows
+        cpu->FLAG_REGISTER |= (0x1 << 5); //Set H flag to 1
+    }
+    if(((cpu->HL & 0xffff) + 1) & 0x10000){
+        cpu->FLAG_REGISTER |= (0x1 << 4); //Set C flag to 1
+    }
+    cpu->HL+=cpu->DE;
+
+    cpu->FLAG_REGISTER &= 0xbf; // 0xbf->0b10111111 turning bit 6 (N flag) off 
+}
+
+//0x1A
+void LD_A_DE(CPU* cpu){
+    cpu->A = MEMORY[cpu->DE];
+}
+
+//0x1B
+void DEC_DE(CPU* cpu){
+    cpu->DE--;
+}
+
+//0x1C
+void INC_E(CPU* cpu){
+    if(((cpu->E & 0xf) + 1) & 0x10){ //If the lower nibble of reg overflows
+        cpu->FLAG_REGISTER |= (0x1 << 5); //Set H flag to 1
+    }
+    cpu->E+;
+    if (cpu->E == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); //Set Z flag to 1
+    }
+    cpu->FLAG_REGISTER &= 0xbf; // 0xbf->0b10111111 turning bit 6 (N flag) off 
+}
+
+//0x1D
+void DEC_E(CPU* cpu){
+    if(((cpu->E & 0xf) + 1) & 0x10){ 
+        cpu->FLAG_REGISTER |= (0x1 << 5); 
+    }
+    cpu->E--;
+    if (cpu->E == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); 
+    }
+    cpu->FLAG_REGISTER |= (0x1 << 6);//Now turning on
+}
+
+//0x1E
+void LD_E_8(CPU* cpu, d8 data){
+    cpu->E = data;
+}
+
+//0x1F pending....
