@@ -317,3 +317,42 @@ void ADD_HL_HL(CPU* cpu){
 void LD_A_HLP(CPU* cpu){
     cpu->A = MEMORY[cpu->HL++];
 }
+
+//0x2B
+void DEC_HL(CPU* cpu){
+    cpu->HL--;
+}
+
+//0x2C
+void INC_L(CPU* cpu){
+    if(((cpu->L & 0xf) + 1) & 0x10){ //If the lower nibble of reg overflows
+        cpu->FLAG_REGISTER |= (0x1 << 5); //Set H flag to 1
+    }
+    cpu->L++;
+    if (cpu->L == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); //Set Z flag to 1
+    }
+    cpu->FLAG_REGISTER &= 0xbf; // 0xbf->0b10111111 turning bit 6 (N flag) off 
+}
+
+//0x2D
+void DEC_L(CPU* cpu){
+    if(((cpu->L & 0xf) + 1) & 0x10){ 
+        cpu->FLAG_REGISTER |= (0x1 << 5); 
+    }
+    cpu->L--;
+    if (cpu->L == 0){
+        cpu->FLAG_REGISTER |= (0x1 << 7); 
+    }
+    cpu->FLAG_REGISTER |= (0x1 << 6);//Now turning on
+}
+
+//0x2E
+void LD_L_8(CPU* cpu, d8 data){
+    cpu->L = data;
+}
+
+//0x2F
+void CPL(CPU* cpu){
+    cpu->A = ~(cpu->A); //Taking 1's compliment of A
+}
